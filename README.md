@@ -1,4 +1,4 @@
-# Cloudxs — Developer-First Media CDN Platform
+# CLOUDXS [visit](cloudxs.app)
 
 Cloudxs is a developer-first media upload and delivery platform that allows developers to securely upload images and videos and serve them globally via a CDN, without backend bottlenecks or file size limits.
 
@@ -75,15 +75,15 @@ The SDK abstracts the entire upload process into a single function:
 await cloudxs.upload(file);
 ```
 
-Internally, the SDK performs the following steps:
+ - Internally, the SDK performs the following steps:
 
-Requests upload permission from the Cloudxs backend
+ - Requests upload permission from the Cloudxs backend
 
-Receives a presigned S3 upload URL
+ - Receives a presigned S3 upload URL
 
-Uploads the file directly to AWS S3
+ - Uploads the file directly to AWS S3
 
-Returns the final CDN URL
+ - Returns the final CDN URL
 
 This design provides a single, simple API for developers while remaining scalable and secure.
 
@@ -139,15 +139,15 @@ This flow removes backend load and avoids request size limitations such as the 1
 
 ##### Cloudxs Architecture
 
--Backend only controls permissions
+ - Backend only controls permissions
 
--Files are uploaded directly to cloud storage
+ - Files are uploaded directly to cloud storage
 
--CDN handles all media delivery
+ - CDN handles all media delivery
 
--Cost-efficient and highly scalable
+ - Cost-efficient and highly scalable
 
--This architecture is used by modern, production-grade platforms.
+ - This architecture is used by modern, production-grade platforms.
 
 ##### Tech Stack
 Layer	Technology
