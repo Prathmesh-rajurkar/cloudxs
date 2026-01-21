@@ -1,6 +1,7 @@
-# CLOUDXS [visit](cloudxs.app)
+# CLOUDXS 
 
-Cloudxs is a developer-first media upload and delivery platform that allows developers to securely upload images and videos and serve them globally via a CDN, without backend bottlenecks or file size limits.
+
+[Cloudxs](https://cloudxs.app) is a developer-first media upload and delivery platform that allows developers to securely upload images and videos and serve them globally via a CDN, without backend bottlenecks or file size limits.
 
 It is designed using an industry-standard control-plane and data-plane architecture, similar to platforms like Cloudinary and Firebase Storage.
 
@@ -197,6 +198,6 @@ cloudxs/
 
 ## Author
 
-Prathmesh Rajurkar
-Full Stack / Cloud Engineer
-India
+### [Prathmesh Rajurkar](http://prathmeshrajurkar.tech/)
+#### Full Stack / Cloud Engineer
+#### India
