@@ -73,6 +73,7 @@ The SDK abstracts the entire upload process into a single function:
 
 ```js
 await cloudxs.upload(file);
+```
 
 Internally, the SDK performs the following steps:
 
@@ -86,28 +87,30 @@ Returns the final CDN URL
 
 This design provides a single, simple API for developers while remaining scalable and secure.
 
-4. Data Plane (Storage and Delivery)
-AWS S3 (Private Bucket)
+### 4. Data Plane (Storage and Delivery)
 
-Stores original images and videos
+#### AWS S3 (Private Bucket)
 
-Bucket is private and not publicly accessible
+ - Stores original images and videos
 
-Uploads are allowed only via short-lived presigned URLs
+ - Bucket is private and not publicly accessible
 
-No direct access from browsers or users
+ - Uploads are allowed only via short-lived presigned URLs
 
-CloudFront CDN — cdn.cloudxs.app
+ - No direct access from browsers or users
 
-Global content delivery network
+#### CloudFront CDN — cdn.cloudxs.app
 
-Serves media directly from the private S3 bucket
+ - Global content delivery network
 
-Backend is never involved in file delivery
+ - Serves media directly from the private S3 bucket
 
-Highly scalable and low-latency
+ - Backend is never involved in file delivery
 
-Upload Flow (Step-by-Step)
+ - Highly scalable and low-latency
+
+#### Upload Flow (Step-by-Step)
+```
 User / Developer
       ↓
 Cloudxs SDK
@@ -119,34 +122,34 @@ Presigned S3 URL returned
 Direct upload to AWS S3
       ↓
 Media available via cdn.cloudxs.app
-
+```
 
 This flow removes backend load and avoids request size limitations such as the 10MB limit commonly found in server frameworks.
 
-Why This Architecture Matters
-Traditional Backend Uploads
+#### Why This Architecture Matters
+##### Traditional Backend Uploads
 
-Backend receives the full file
+ - Backend receives the full file
 
-Limited by request body size
+ - Limited by request body size
 
-High memory and CPU usage
+ - High memory and CPU usage
 
-Expensive and difficult to scale
+ - Expensive and difficult to scale
 
-Cloudxs Architecture
+##### Cloudxs Architecture
 
-Backend only controls permissions
+-Backend only controls permissions
 
-Files are uploaded directly to cloud storage
+-Files are uploaded directly to cloud storage
 
-CDN handles all media delivery
+-CDN handles all media delivery
 
-Cost-efficient and highly scalable
+-Cost-efficient and highly scalable
 
-This architecture is used by modern, production-grade platforms.
+-This architecture is used by modern, production-grade platforms.
 
-Tech Stack
+##### Tech Stack
 Layer	Technology
 Frontend	Next.js
 Backend	Node.js
@@ -155,67 +158,44 @@ Storage	AWS S3
 CDN	AWS CloudFront
 SDK	JavaScript / TypeScript
 Infrastructure	AWS
-Security Design
 
-API key based authentication
+##### Security Design
 
-Private AWS S3 buckets
+ - API key based authentication
 
-Time-limited presigned upload URLs
+ - Private AWS S3 buckets
 
-CDN access restricted through CloudFront
+ - Time-limited presigned upload URLs
 
-No public access to raw storage
+ - CDN access restricted through CloudFront
 
-Project Structure
+ - No public access to raw storage
+
+##### Project Structure
+```
 cloudxs/
 ├── frontend/        # cloudxs.app (Next.js dashboard)
 ├── backend/         # api.cloudxs.app (Node.js control plane)
 ├── sdk/             # Cloudxs SDK
 ├── infrastructure/  # AWS and CloudFront configuration
 └── docs/            # Architecture diagrams and documentation
+```
+##### Key Concepts Demonstrated
 
-Key Concepts Demonstrated
+ - Control plane vs data plane separation
 
-Control plane vs data plane separation
+ - Secure direct-to-cloud uploads
 
-Secure direct-to-cloud uploads
+ - CDN-first media delivery
 
-CDN-first media delivery
+ - API key based security model
 
-API key based security model
+ - SDK design for developer platforms
 
-SDK design for developer platforms
+ - Scalable cloud infrastructure
 
-Scalable cloud infrastructure
 
-Why This Project Stands Out
-
-Real-world SaaS system design
-
-Solves genuine scalability problems
-
-Uses cloud services correctly
-
-Designed as a production-grade platform
-
-Easy to explain in technical interviews
-
-Future Enhancements
-
-Video transcoding and streaming
-
-Image optimization
-
-Usage-based billing
-
-Signed CDN URLs
-
-Multipart uploads for large videos
-
-Organization and team support
-
-Author
+## Author
 
 Prathmesh Rajurkar
 Full Stack / Cloud Engineer
