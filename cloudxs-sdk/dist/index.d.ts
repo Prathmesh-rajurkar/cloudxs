@@ -1,9 +1,12 @@
 declare class CloudXS {
-    private http;
+    private apiKey;
     constructor(config: {
         apiKey: string;
     });
-    health(): Promise<any>;
+    upload(file: File): Promise<{
+        success: boolean;
+        filename: string;
+    }>;
 }
 
 export { CloudXS };

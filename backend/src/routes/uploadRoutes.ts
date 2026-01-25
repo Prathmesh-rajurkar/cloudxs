@@ -7,10 +7,10 @@ import { supabase } from "../utils/supabase";
 const router = express.Router();
 
 const s3 = new S3Client({
-  region: "ap-south-1",
+  region: process.env.AWS_REGION!,
   credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY!,
-    secretAccessKey: process.env.AWS_SECRET_KEY!,
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
   },
 });
 
@@ -20,7 +20,8 @@ export async function getUploadUrl(
   apiKey: string
 ) {
   const keyHash = crypto.createHash("sha256").update(apiKey).digest("hex");
-
+  console.log(keyHash);
+  
   const { data: apiKeyRow, error } = await supabase
     .from("api_keys")
     .select("user_id, is_active")
@@ -30,13 +31,15 @@ export async function getUploadUrl(
   if (error || !apiKeyRow || !apiKeyRow.is_active) {
     throw new Error("Invalid API key");
   }
-
+  console.log(apiKeyRow);
+  
   const { data: user } = await supabase
     .from("users")
     .select("username")
     .eq("id", apiKeyRow.user_id)
     .single();
-
+  console.log(user);
+  
   if (!user) {
     throw new Error("User not found");
   }

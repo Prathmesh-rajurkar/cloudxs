@@ -1,7 +1,8 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
-import uploadRoutes from './routes/uploadRoutes.js';
+import uploadRoutes from './src/routes/uploadRoutes';
+
 
 const app = express();
 const port = process.env.PORT || 5000;

@@ -1,6 +1,6 @@
 {
   "name": "cloudxs",
-  "version": "0.1.0",
+  "version": "0.1.4",
   "main": "dist/index.cjs",
   "module": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -13,5 +13,9 @@
   },
   "dependencies": {
     "axios": "^1.13.2"
+  },
+  "devDependencies": {
+    "tsup": "^8.5.1",
+    "typescript": "^5.9.3"
   }
 }
