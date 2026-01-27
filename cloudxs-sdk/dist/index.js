@@ -27,6 +27,7 @@ module.exports = __toCommonJS(index_exports);
 // src/client.ts
 var CloudXS = class {
   constructor(config) {
+    this.CDN_BASE_URL = "https://cdn.cloudxs.app";
     if (!config.apiKey) {
       throw new Error("CloudXS API key is required");
     }
@@ -45,10 +46,11 @@ var CloudXS = class {
       })
     });
     const json = await res.json();
+    console.log(json);
     if (!res.ok) {
-      throw new Error("Failed to get upload URL" + json + file + file.name + file.type);
+      throw new Error(json.message || "Failed to get upload URL");
     }
-    const { uploadUrl } = await res.json();
+    const { uploadUrl, key } = json;
     const uploadRes = await fetch(uploadUrl, {
       method: "PUT",
       headers: {
@@ -56,12 +58,13 @@ var CloudXS = class {
       },
       body: file
     });
+    console.log(uploadRes);
     if (!uploadRes.ok) {
       throw new Error("Upload failed");
     }
     return {
       success: true,
-      filename: file.name
+      url: `${this.CDN_BASE_URL}/${key}`
     };
   }
 };

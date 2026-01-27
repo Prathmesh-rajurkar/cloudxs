@@ -13,6 +13,16 @@ app.use(cors());
 app.use('/upload',uploadRoutes);
 app.use('/apikey',apikeyRoutes);
 
+
+app.get("/health", (_req, res) => {
+  res.status(200).json({
+    status: "ok",
+    service: "cloudxs-backend",
+    uptime: process.uptime(),
+    timestamp: new Date().toISOString(),
+  });
+});
+
 app.listen(port, () => {  
   console.log(`Server is running on port ${port}`);
 });
