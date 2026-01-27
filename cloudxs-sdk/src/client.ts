@@ -9,7 +9,7 @@ export class CloudXS {
   }
 
   async upload(file: File) {
-    const res = await fetch("http://localhost:5000/upload/upload-url", {
+    const res = await fetch("https://api.cloudxs.app/upload/upload-url", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
