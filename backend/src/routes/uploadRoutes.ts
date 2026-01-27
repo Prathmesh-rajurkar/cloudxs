@@ -47,7 +47,7 @@ export async function getUploadUrl(
   const ext = filename.split(".").pop();
   const id = crypto.randomUUID().slice(0, 8);
 
-  const key = `images/${user.username}/${id}.${ext}`;
+  const key = `${user.username}/${id}.${ext}`;
 
   const command = new PutObjectCommand({
     Bucket: process.env.AWS_S3_BUCKET!,

@@ -20,13 +20,15 @@ export class CloudXS {
         apiKey: this.apiKey,
       }),
     });
+
     const json = await res.json();
     console.log(json);
+
     if (!res.ok) {
-      throw new Error("Failed to get upload URL" + json + file + file.name + file.type);
+      throw new Error(json.message || "Failed to get upload URL");
     }
 
-    const { uploadUrl } = await res.json();
+    const { uploadUrl } = json;
 
     const uploadRes = await fetch(uploadUrl, {
       method: "PUT",
@@ -35,6 +37,7 @@ export class CloudXS {
       },
       body: file,
     });
+    console.log(uploadRes);
 
     if (!uploadRes.ok) {
       throw new Error("Upload failed");
