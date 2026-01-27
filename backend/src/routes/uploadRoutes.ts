@@ -74,7 +74,7 @@ router.post("/upload-url", async (req, res) => {
 
     res.json(result);
   } catch (err: any) {
-    res.status(401).json({ message: err.message });
+    res.status(500).json({ message: err.message });
   }
 });
 

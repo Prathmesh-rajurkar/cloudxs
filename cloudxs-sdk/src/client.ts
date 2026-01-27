@@ -1,6 +1,6 @@
 export class CloudXS {
   private apiKey: string;
-
+ private CDN_BASE_URL = "https://cdn.cloudxs.app";
   constructor(config: { apiKey: string }) {
     if (!config.apiKey) {
       throw new Error("CloudXS API key is required");
@@ -28,7 +28,7 @@ export class CloudXS {
       throw new Error(json.message || "Failed to get upload URL");
     }
 
-    const { uploadUrl } = json;
+    const { uploadUrl,key } = json;
 
     const uploadRes = await fetch(uploadUrl, {
       method: "PUT",
@@ -45,7 +45,7 @@ export class CloudXS {
 
     return {
       success: true,
-      filename: file.name,
+      url:`${this.CDN_BASE_URL}/${key}`,
     };
   }
 }
