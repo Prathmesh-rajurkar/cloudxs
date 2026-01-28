@@ -17,10 +17,10 @@ const HeroSection = () => {
 
       {/* Content */}
       <div className="relative max-w-3xl mx-auto z-10 text-center flex flex-col items-center justify-center h-full">
-        <h1 className="text-5xl font-bold mb-6 text-gray-900">
+        <h1 className="text-3xl md:text-5xl font-bold mb-6 text-gray-900">
           Image & Video API with Transformation on Go
         </h1>
-        <p className="text-xl mb-5">
+        <p className="text-sm md:text-xl mb-5">
           CloudXS helps you upload, optimize, transform, store, and deliver
           media globally so developers ship faster, teams move independently,
           and users get lightning-fast visuals everywhere.
