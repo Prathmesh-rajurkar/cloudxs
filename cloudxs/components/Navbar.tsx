@@ -19,7 +19,7 @@ const Navbar = ({ isLoggedIn = true }) => {
       {/* Action Button */}
       <Link
         href={href}
-        className="flex items-center gap-3 bg-green-600 px-3 md:px-4 py-2 rounded-full hover:bg-green-700 transition"
+        className="flex items-center gap-3 md:bg-green-600 px-3 md:px-4 py-2 rounded-full md:hover:bg-green-700 transition"
       >
         {/* Text hidden on mobile */}
         <span className="hidden md:block text-lg text-white">
