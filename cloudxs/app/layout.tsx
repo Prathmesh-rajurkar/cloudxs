@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import AppGuard from "@/components/AppGuard";
 
 export const metadata: Metadata = {
   title: "CloudXS",
@@ -14,7 +15,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        {children}
+        <AppGuard>{children}</AppGuard>
       </body>
     </html>
   );
