@@ -1,8 +1,8 @@
 "use client";
 
-import { getUserId } from "@/utils/auth";
+import { getToken, getUserId } from "@/utils/auth";
 import React, { useEffect, useState } from "react";
-
+import { toast } from "sonner"
 const BASE_API_URL = process.env.NEXT_PUBLIC_BASE_API_URL;
 
 type ApiKey = {
@@ -14,6 +14,7 @@ type ApiKey = {
 
 const ApiKeysPage = () => {
   const user_id = getUserId();
+  // console.log(user_id);
 
   const [keys, setKeys] = useState<ApiKey[]>([]);
   const [openCreate, setOpenCreate] = useState(false);
@@ -24,7 +25,12 @@ const ApiKeysPage = () => {
   /* ---------------- Fetch Keys ---------------- */
   const fetchKeys = async () => {
     const res = await fetch(
-      `${BASE_API_URL}/apikey/get-apikeys?user_id=${user_id}`
+      `${BASE_API_URL}/apikey/get-apikeys?user_id=${user_id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${getToken()}`,
+        },
+      }
     );
     const data = await res.json();
     setKeys(data.api_keys || []);
@@ -33,19 +39,20 @@ const ApiKeysPage = () => {
   useEffect(() => {
     fetchKeys();
   }, []);
-
+// ck_live_8fef44bf28fb40f16f4f0b8efcba0ec3
   /* ---------------- Create Key ---------------- */
   const createKey = async () => {
-    const res = await fetch(
-      `${BASE_API_URL}/apikey/create-apikey`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ user_id, name: keyName }),
-      }
-    );
+    const res = await fetch(`${BASE_API_URL}/apikey/create-apikey`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${getToken()}`,
+      },
+      body: JSON.stringify({ user_id, name: keyName }),
+    });
 
     const data = await res.json();
+    // console.log(data);
 
     setGeneratedKey(data.api_key);
     setOpenCreate(false);
@@ -57,7 +64,7 @@ const ApiKeysPage = () => {
 
   const copyKey = async () => {
     await navigator.clipboard.writeText(generatedKey);
-    alert("API key copied");
+    toast("API key copied");
   };
 
   return (
@@ -190,8 +197,6 @@ const Modal = ({
   onClose: () => void;
 }) => (
   <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-    <div className="bg-white rounded-xl w-full max-w-md p-6">
-      {children}
-    </div>
+    <div className="bg-white rounded-xl w-full max-w-md p-6">{children}</div>
   </div>
 );

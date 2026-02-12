@@ -73,22 +73,26 @@ router.post("/login", async (req, res) => {
 });
 
 router.post("/check-username", async (req, res) => {
-  const { username } = req.body;
+  try {
+    const { username } = req.body;
 
-  if (!username) {
-    return res.status(400).json({ message: "Username required" });
+    if (!username) {
+      return res.status(400).json({ message: "Username required" });
+    }
+
+    const { data } = await supabase
+      .from("users")
+      .select("id")
+      .eq("username", username)
+      .single();
+    //   console.log(data);
+
+    return res.json({
+      available: !data,
+    });
+  } catch (error) {
+    return res.status(500).json({ message: "Server error" });
   }
-
-  const { data } = await supabase
-    .from("users")
-    .select("id")
-    .eq("username", username)
-    .single();
-//   console.log(data);
-
-  return res.json({
-    available: !data,
-  });
 });
 
 export default router;

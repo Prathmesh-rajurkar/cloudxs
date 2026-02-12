@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import AppGuard from "@/components/AppGuard";
-
+import { Toaster } from "@/components/ui/sonner"
 export const metadata: Metadata = {
   title: "CloudXS",
   description: "CloudXS - Your Cloud Storage Solution",
@@ -16,6 +16,8 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <AppGuard>{children}</AppGuard>
+        <Toaster />
+
       </body>
     </html>
   );

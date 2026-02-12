@@ -71,7 +71,7 @@ router.post("/upload-url", async (req, res) => {
     }
 
     const result = await getUploadUrl(filename, filetype, apiKey);
-
+    
     res.json(result);
   } catch (err: any) {
     res.status(500).json({ message: err.message });
