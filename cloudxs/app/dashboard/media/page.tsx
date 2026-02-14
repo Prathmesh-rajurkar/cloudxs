@@ -12,14 +12,18 @@ const page = () => {
   const [mediaList, setMediaList] = React.useState<Media[]>([]);
   const user_id = getUserId();
   const fetchMedia = async () => {
-    const res = await fetch(`${BASE_API_URL}/media/media-get?user_id=${user_id}`, {
-      headers: {
-        Authorization: `Bearer ${getToken()}`,
-      },
-    });
-    const data = await res.json();
-    setMediaList(data.media);
-    console.log(data);
+    try {
+      const res = await fetch(`${BASE_API_URL}/media/media-get?user_id=${user_id}`, {
+        headers: {
+          Authorization: `Bearer ${getToken()}`,
+        },
+      });
+      const data = await res.json();
+      setMediaList(data.media);
+      console.log(data);
+    } catch (error) {
+      console.error("Error fetching media:", error);
+    }
   }
   React.useEffect(() => {
     fetchMedia();

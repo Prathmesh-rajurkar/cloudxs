@@ -6,7 +6,7 @@ const router = express.Router();
 router.post("/media-save", async (req, res) => {
   try {
     const { url, userId, filename, filetype} = req.body;
-    const file = await supabase.from("media_file").insert({
+    const file = await supabase.from("media_files").insert({
       file_url: url,
       user_id: userId,
       filename,
