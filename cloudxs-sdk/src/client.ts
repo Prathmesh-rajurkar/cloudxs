@@ -28,7 +28,7 @@ export class CloudXS {
       throw new Error(json.message || "Failed to get upload URL");
     }
 
-    const { uploadUrl,key } = json;
+    const { uploadUrl,key,userId } = json;
 
     const uploadRes = await fetch(uploadUrl, {
       method: "PUT",
@@ -43,6 +43,19 @@ export class CloudXS {
       throw new Error("Upload failed");
     }
 
+    const mediaFile = await fetch(`https://api.cloudxs.app/media/media-save`,{
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json",
+      },
+      body:JSON.stringify({
+        url:`${this.CDN_BASE_URL}/${key}`,
+        userId,
+        filename:file.name,
+        filetype:file.type,
+      })
+      
+    })
     return {
       success: true,
       url:`${this.CDN_BASE_URL}/${key}`,

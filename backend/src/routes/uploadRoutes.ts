@@ -17,11 +17,11 @@ const s3 = new S3Client({
 export async function getUploadUrl(
   filename: string,
   filetype: string,
-  apiKey: string
+  apiKey: string,
 ) {
   const keyHash = crypto.createHash("sha256").update(apiKey).digest("hex");
   console.log(keyHash);
-  
+
   const { data: apiKeyRow, error } = await supabase
     .from("api_keys")
     .select("user_id, is_active")
@@ -32,14 +32,14 @@ export async function getUploadUrl(
     throw new Error("Invalid API key");
   }
   console.log(apiKeyRow);
-  
+
   const { data: user } = await supabase
     .from("users")
     .select("username")
     .eq("id", apiKeyRow.user_id)
     .single();
   console.log(user);
-  
+
   if (!user) {
     throw new Error("User not found");
   }
@@ -59,7 +59,7 @@ export async function getUploadUrl(
     expiresIn: 60,
   });
 
-  return { uploadUrl, key };
+  return { uploadUrl, key, userId: apiKeyRow.user_id };
 }
 
 router.post("/upload-url", async (req, res) => {
@@ -71,11 +71,13 @@ router.post("/upload-url", async (req, res) => {
     }
 
     const result = await getUploadUrl(filename, filetype, apiKey);
-    
+
     res.json(result);
   } catch (err: any) {
     res.status(500).json({ message: err.message });
   }
 });
+
+
 
 export default router;
