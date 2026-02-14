@@ -24,7 +24,7 @@ router.get("/media-get", async (req, res) => {
     try {
       const { userId } = req.query;
       const { data, error } = await supabase
-        .from("media_file")
+        .from("media_files")
         .select("*")
         .eq("user_id", userId);
         console.log(data);
