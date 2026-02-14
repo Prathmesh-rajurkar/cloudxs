@@ -12,7 +12,7 @@ const page = () => {
   const [mediaList, setMediaList] = React.useState<Media[]>([]);
   const user_id = getUserId();
   const fetchMedia = async () => {
-    const res = await fetch(`${BASE_API_URL}/media/get-media?user_id=${user_id}`, {
+    const res = await fetch(`${BASE_API_URL}/media/media-get?user_id=${user_id}`, {
       headers: {
         Authorization: `Bearer ${getToken()}`,
       },
