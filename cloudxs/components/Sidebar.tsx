@@ -1,5 +1,6 @@
 "use client";
 
+import { getUser, logout } from "@/utils/auth";
 import {
   Home,
   BarChart3,
@@ -10,10 +11,11 @@ import {
   Cloud,
   Menu,
   X,
+  LogOut,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import React, { ReactNode, useState } from "react";
+import React, { ReactNode, useEffect, useState } from "react";
 
 /* ---------- Types ---------- */
 
@@ -33,10 +35,26 @@ type SectionProps = {
 const Sidebar = () => {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const [user, setUser] = useState<{
+  username?: string;
+  email?: string;
+} | null>(null);
+
+useEffect(() => {
+  const u = getUser();
+
+  if (u) {
+    setUser({
+      username: u.username ?? undefined,
+      email: u.email ?? undefined,
+    });
+  }
+}, []);
+
 
   return (
     <>
-      {/* Mobile Toggle Button */}
+      {/* Mobile Toggle */}
       <button
         onClick={() => setOpen(true)}
         className="md:hidden fixed top-4 left-4 z-50 bg-green-600 text-white p-2 rounded-lg"
@@ -44,33 +62,32 @@ const Sidebar = () => {
         <Menu size={20} />
       </button>
 
-      {/* Backdrop (mobile) */}
       {open && (
         <div
           onClick={() => setOpen(false)}
-          className="fixed inset-0 bg-black/40 z-40 md:hidden"
+          className="fixed inset-0 bg-black/60 z-40 md:hidden"
         />
       )}
 
       {/* Sidebar */}
       <aside
         className={`
-          fixed top-0 left-0 h-screen w-64 bg-[#0b1b2b] text-white z-50
+          fixed top-0 left-0 h-screen w-64 bg-black text-white z-50
           transform transition-transform duration-300
           ${open ? "translate-x-0" : "-translate-x-full"}
           md:translate-x-0
+          flex flex-col
         `}
       >
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-5 border-b border-white/10">
           <div className="flex items-center gap-2">
-            <Cloud size={32} className="text-green-600 fill-green-600" />
+            <Cloud size={30} className="text-green-500 fill-green-500" />
             <h1 className="text-2xl font-semibold">
-              Cloud<span className="text-green-600">XS</span>
+              Cloud<span className="text-green-500">XS</span>
             </h1>
           </div>
 
-          {/* Close (mobile) */}
           <button
             onClick={() => setOpen(false)}
             className="md:hidden text-white/70 hover:text-white"
@@ -80,7 +97,7 @@ const Sidebar = () => {
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 px-3 py-2 text-sm space-y-1 overflow-y-auto mt-10">
+        <nav className="flex-1 px-3 py-4 text-sm space-y-1 overflow-y-auto scrollbar-hide">
           <SidebarItem
             icon={<Home size={18} />}
             label="Get Started"
@@ -127,16 +144,25 @@ const Sidebar = () => {
           />
         </nav>
 
-        {/* User */}
-        <div className="fixed px-4 py-4 border-t border-white/10 bottom-0 w-full">
+        {/* User Section */}
+        <div className="px-4 py-4 border-t border-white/10">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-full bg-green-600 flex items-center justify-center font-semibold">
-              PR
+            {/* FULL PERFECT CIRCLE */}
+            <div className="w-10 h-10 min-w-[40px] rounded-full bg-green-500 flex items-center justify-center font-semibold text-black">
+              {user?.username?.[0]?.toUpperCase() ?? "U"}
             </div>
-            <div className="text-xs">
-              <p className="font-medium">Prathmesh Rajurkar</p>
-              <p className="text-white/60">Developer</p>
+
+            {/* Scrollable Username + Email */}
+            <div className="flex-1 text-xs overflow-x-auto scrollbar-hide whitespace-nowrap">
+              <p className="font-medium truncate">{user?.username}</p>
+              <p className="text-white/50 truncate">{user?.email}</p>
             </div>
+
+            <LogOut
+              size={16}
+              className="text-white/60 hover:text-white cursor-pointer"
+              onClick={() => logout()}
+            />
           </div>
         </div>
       </aside>

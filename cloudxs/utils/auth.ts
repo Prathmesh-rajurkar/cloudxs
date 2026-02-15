@@ -5,6 +5,17 @@ type DecodedToken = {
   user_id: string;
 };
 
+export const getUser = () => {
+  if (typeof window === "undefined") return null;
+
+  return {
+    email: localStorage.getItem("cloudxs_email") ?? undefined,
+    username: localStorage.getItem("cloudxs_username") ?? undefined,
+  };
+};
+
+
+
 export const getToken = () =>
   typeof window !== "undefined"
     ? localStorage.getItem("cloudxs_token")
@@ -30,10 +41,14 @@ export const isTokenValid = () => {
 export const logout = () => {
   localStorage.removeItem("cloudxs_token");
   localStorage.removeItem("cloudxs_user_id");
+  localStorage.removeItem("cloudxs_email");
+  localStorage.removeItem("cloudxs_username");
 };
 
 
-export const saveAuth = (token: string, user_id: string) => {
+export const saveAuth = (token: string, user_id: string,username:string,email:string) => {
   localStorage.setItem("cloudxs_token", token);
   localStorage.setItem("cloudxs_user_id", user_id);
+  localStorage.setItem("cloudxs_email", email);
+  localStorage.setItem("cloudxs_username", username);
 };

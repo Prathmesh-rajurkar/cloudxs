@@ -15,6 +15,8 @@ interface Media {
 
 const BASE_API_URL = process.env.NEXT_PUBLIC_BASE_API_URL!;
 
+/* ---------------- Helpers ---------------- */
+
 const formatBytes = (bytes?: number) => {
   if (!bytes) return "";
   if (bytes < 1024) return `${bytes} B`;
@@ -23,6 +25,18 @@ const formatBytes = (bytes?: number) => {
     return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
   return `${(bytes / (1024 * 1024 * 1024)).toFixed(2)} GB`;
 };
+
+const isImage = (filetype?: string) => {
+  if (!filetype) return false;
+  return filetype.startsWith("image/");
+};
+
+const isVideo = (filetype?: string) => {
+  if (!filetype) return false;
+  return filetype.startsWith("video/");
+};
+
+/* ---------------- Component ---------------- */
 
 const Page = () => {
   const [mediaList, setMediaList] = useState<Media[]>([]);
@@ -70,13 +84,26 @@ const Page = () => {
                 key={media.id}
                 className="bg-white rounded-xl border shadow-sm hover:shadow-md transition overflow-hidden"
               >
-                {/* Image */}
-                <div className="aspect-square bg-gray-100 overflow-hidden">
-                  <img
-                    src={media.file_url}
-                    alt={media.filename}
-                    className="w-full h-full object-cover hover:scale-105 transition duration-300"
-                  />
+                {/* Media Preview */}
+                <div className="aspect-square bg-gray-100 overflow-hidden relative">
+                  {isImage(media.filetype) ? (
+                    <img
+                      src={media.file_url}
+                      alt={media.filename}
+                      className="w-full h-full object-cover hover:scale-105 transition duration-300"
+                      loading="lazy"
+                    />
+                  ) : isVideo(media.filetype) ? (
+                    <video
+                      src={media.file_url}
+                      className="w-full h-full object-cover"
+                      controls
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-gray-400 text-sm">
+                      Unsupported
+                    </div>
+                  )}
                 </div>
 
                 {/* Info */}
@@ -88,9 +115,7 @@ const Page = () => {
 
                     <div className="flex gap-2">
                       <button
-                        onClick={() =>
-                          copyToClipboard(media.file_url)
-                        }
+                        onClick={() => copyToClipboard(media.file_url)}
                         className="text-gray-400 hover:text-gray-700 text-xs"
                       >
                         ⧉

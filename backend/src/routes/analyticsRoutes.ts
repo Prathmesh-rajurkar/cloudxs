@@ -4,14 +4,13 @@ import { supabase } from "../utils/supabase";
 const router = express.Router();
 
 router.get("/analytics", async (req, res) => {
-    try {
-        const { user_id } = req.query;
-        const {data,error} = await supabase
-        .from("media_files")
-        .select("*")
-        .eq("user_id", user_id);
+  try {
+    const { user_id } = req.query;
+    const { data, error } = await supabase
+      .from("media_files")
+      .select("*")
+      .eq("user_id", user_id);
 
-        
     if (error) {
       return res.status(500).json({ message: error.message });
     }
@@ -29,24 +28,36 @@ router.get("/analytics", async (req, res) => {
       uploadsByType,
       totalStorageUsed,
     });
-    } catch (err: any) {
-        res.status(500).json({ message: err.message });
-    }
+  } catch (err: any) {
+    res.status(500).json({ message: err.message });
+  }
 });
 
 router.get("/graph-data", async (req, res) => {
-    try {
-        const { user_id } = req.query;
-        const {start_date, end_date} = req.query;
+  try {
+    const { start_date, end_date, user_id } = req.query;
 
-        const {data,error} = await supabase
-        .from("media_files")
-        .select("created_at")
-        .eq("user_id", user_id)
-        .gte("created_at", start_date)
-        .lte("created_at", end_date);
+    if (
+      typeof start_date !== "string" ||
+      typeof end_date !== "string" ||
+      typeof user_id !== "string"
+    ) {
+      return res.status(400).json({ message: "Invalid query parameters" });
+    }
 
-        
+    const startDateObj = new Date(start_date);
+    startDateObj.setHours(0, 0, 0, 0);
+
+    const endDateObj = new Date(end_date);
+    endDateObj.setHours(23, 59, 59, 999);
+
+    const { data, error } = await supabase
+      .from("media_files")
+      .select("created_at")
+      .eq("user_id", user_id)
+      .gte("created_at", startDateObj.toISOString())
+      .lte("created_at", endDateObj.toISOString());
+
     if (error) {
       return res.status(500).json({ message: error.message });
     }
@@ -58,9 +69,9 @@ router.get("/graph-data", async (req, res) => {
     return res.json({
       uploadsByDate,
     });
-    } catch (err: any) {
-        res.status(500).json({ message: err.message });
-    }
+  } catch (err: any) {
+    res.status(500).json({ message: err.message });
+  }
 });
 
 export default router;

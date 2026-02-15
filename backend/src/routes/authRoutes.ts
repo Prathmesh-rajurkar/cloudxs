@@ -33,6 +33,8 @@ router.post("/register", async (req, res) => {
     return res.status(201).json({
       token,
       user_id: data.id,
+      username,
+      email,
     });
   } catch (err: any) {
     return res.status(500).json({ message: err.message });
@@ -66,6 +68,8 @@ router.post("/login", async (req, res) => {
     return res.json({
       token,
       user_id: user.id,
+      username: user.username,
+      email: user.email,
     });
   } catch (err: any) {
     return res.status(500).json({ message: err.message });

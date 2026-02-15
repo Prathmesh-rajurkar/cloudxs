@@ -31,7 +31,7 @@ const LoginPage = () => {
         return;
       }
 
-      saveAuth(data.token, data.user_id);
+      saveAuth(data.token, data.user_id,data.username,data.email);
       router.replace("/dashboard");
     } catch {
       setError("Something went wrong. Try again.");

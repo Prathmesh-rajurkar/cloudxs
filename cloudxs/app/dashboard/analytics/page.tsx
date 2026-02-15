@@ -24,15 +24,17 @@ const Page = () => {
   const user_id = getUserId();
 
   const today = new Date();
-  const oneMonthAgo = new Date();
-  oneMonthAgo.setMonth(today.getMonth() - 1);
+  today.setHours(23, 59, 59, 999);
 
+  const oneMonthAgo = new Date();
+  oneMonthAgo.setDate(today.getDate() - 29);
+  oneMonthAgo.setHours(0, 0, 0, 0);
+  
   const [startDate, setStartDate] = useState(
-    oneMonthAgo.toISOString().split("T")[0]
+    oneMonthAgo.toISOString().split("T")[0],
   );
-  const [endDate, setEndDate] = useState(
-    today.toISOString().split("T")[0]
-  );
+
+  const [endDate, setEndDate] = useState(today.toISOString().split("T")[0]);
 
   const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
   const [graphData, setGraphData] = useState<Record<string, number>>({});
@@ -42,7 +44,7 @@ const Page = () => {
       `${BASE_API_URL}/analytics/analytics?user_id=${user_id}`,
       {
         headers: { Authorization: `Bearer ${getToken()}` },
-      }
+      },
     );
     const data = await res.json();
     setAnalytics(data);
@@ -53,9 +55,11 @@ const Page = () => {
       `${BASE_API_URL}/analytics/graph-data?user_id=${user_id}&start_date=${startDate}&end_date=${endDate}`,
       {
         headers: { Authorization: `Bearer ${getToken()}` },
-      }
+      },
     );
     const data = await res.json();
+    // console.log("Graph",data);
+
     setGraphData(data.uploadsByDate || {});
   };
 
@@ -68,12 +72,11 @@ const Page = () => {
   }, [startDate, endDate]);
 
   const handleDateChange = (newStart: string, newEnd: string) => {
-    const diff =
-      new Date(newEnd).getTime() - new Date(newStart).getTime();
+    const diff = new Date(newEnd).getTime() - new Date(newStart).getTime();
     const maxRange = 30 * 24 * 60 * 60 * 1000;
     setError("");
 
-    if (diff > maxRange+1) {
+    if (diff > maxRange + 1) {
       setError("Date range cannot exceed 1 month");
       setGraphData({});
     }
@@ -110,14 +113,12 @@ const Page = () => {
           <p className="text-sm text-gray-500">Uploads By Type</p>
           <div className="mt-2 text-sm space-y-1">
             {analytics?.uploadsByType
-              ? Object.entries(analytics.uploadsByType).map(
-                  ([type, count]) => (
-                    <div key={type} className="flex justify-between">
-                      <span>{type}</span>
-                      <span>{count}</span>
-                    </div>
-                  )
-                )
+              ? Object.entries(analytics.uploadsByType).map(([type, count]) => (
+                  <div key={type} className="flex justify-between">
+                    <span>{type}</span>
+                    <span>{count}</span>
+                  </div>
+                ))
               : "No data"}
           </div>
         </div>
@@ -130,9 +131,7 @@ const Page = () => {
           <input
             type="date"
             value={startDate}
-            onChange={(e) =>
-              handleDateChange(e.target.value, endDate)
-            }
+            onChange={(e) => handleDateChange(e.target.value, endDate)}
             className="border rounded-md p-2 w-full"
           />
         </div>
@@ -142,46 +141,33 @@ const Page = () => {
           <input
             type="date"
             value={endDate}
-            onChange={(e) =>
-              handleDateChange(startDate, e.target.value)
-            }
+            onChange={(e) => handleDateChange(startDate, e.target.value)}
             className="border rounded-md p-2 w-full"
           />
         </div>
 
-        {error && (
-          <p className="text-red-500 text-sm mt-2">{error}</p>
-        )}
+        {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
       </div>
 
       {/* Graph */}
       <div className="border rounded-lg p-6">
-        <h2 className="text-lg font-medium mb-4">
-          Upload Activity
-        </h2>
+        <h2 className="text-lg font-medium mb-4">Upload Activity</h2>
 
         <div className="overflow-x-auto">
           <div className="flex items-end gap-4 h-64">
             {graphEntries.length === 0 && (
-              <p className="text-gray-500">
-                No uploads in selected range.
-              </p>
+              <p className="text-gray-500">No uploads in selected range.</p>
             )}
 
             {graphEntries.map(([date, count]) => (
-              <div
-                key={date}
-                className="flex flex-col items-center"
-              >
+              <div key={date} className="flex flex-col items-center">
                 <div
                   className="bg-gray-800 w-8"
                   style={{
                     height: `${count * 20}px`,
                   }}
                 />
-                <span className="text-xs mt-2">
-                  {date.slice(5)}
-                </span>
+                <span className="text-xs mt-2">{date.slice(5)}</span>
               </div>
             ))}
           </div>
