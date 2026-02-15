@@ -6,7 +6,7 @@ const router = express.Router();
 router.post("/media-save", async (req, res) => {
   try {
     const { url, user_id, filename, filetype, filesize } = req.body;
-    const file = await supabase
+    const {data: file, error} = await supabase
       .from("media_files")
       .insert({
         file_url: url,
@@ -17,7 +17,10 @@ router.post("/media-save", async (req, res) => {
       })
       .select("*")
       .single();
-
+    if (error) {
+      return res.status(500).json({ message: error.message });
+    }
+    
     res.json({ success: true, file });
   } catch (err: any) {
     res.status(500).json({ message: err.message });

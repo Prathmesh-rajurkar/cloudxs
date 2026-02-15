@@ -75,6 +75,8 @@ var CloudXS = class {
         filesize: file.size
       })
     });
+    const mediaJson = await mediaFile.json();
+    console.log(mediaJson);
     return {
       success: true,
       url: `${this.CDN_BASE_URL}/${key}`
