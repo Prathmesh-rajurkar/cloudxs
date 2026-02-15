@@ -1,57 +1,127 @@
-'use client';
-import { getToken, getUserId } from '@/utils/auth';
-import React from 'react'
+"use client";
+
+import { getToken, getUserId } from "@/utils/auth";
+import React, { useEffect, useState } from "react";
+
 interface Media {
-  id: number;
+  id: string;
   file_url: string;
   filename: string;
   filetype: string;
+  filesize?: number;
+  width?: number;
+  height?: number;
 }
-const BASE_API_URL = process.env.NEXT_PUBLIC_BASE_API_URL;
-const page = () => {
-  const [mediaList, setMediaList] = React.useState<Media[]>([]);
+
+const BASE_API_URL = process.env.NEXT_PUBLIC_BASE_API_URL!;
+
+const formatBytes = (bytes?: number) => {
+  if (!bytes) return "";
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(2)} KB`;
+  if (bytes < 1024 * 1024 * 1024)
+    return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
+  return `${(bytes / (1024 * 1024 * 1024)).toFixed(2)} GB`;
+};
+
+const Page = () => {
+  const [mediaList, setMediaList] = useState<Media[]>([]);
   const user_id = getUserId();
+
   const fetchMedia = async () => {
     try {
-      const res = await fetch(`${BASE_API_URL}/media/media-get?user_id=${user_id}`, {
-        headers: {
-          Authorization: `Bearer ${getToken()}`,
-        },
-      });
+      const res = await fetch(
+        `${BASE_API_URL}/media/media-get?user_id=${user_id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+        }
+      );
+
       const data = await res.json();
-      setMediaList(data.media);
-      console.log(data);
+      setMediaList(data.media || []);
     } catch (error) {
       console.error("Error fetching media:", error);
     }
-  }
-  React.useEffect(() => {
+  };
+
+  useEffect(() => {
     fetchMedia();
   }, []);
-  return (
-    <div className='p-3'>
-      <h1 className='text-2xl font-bold'>Media Management</h1>
 
-      <div>
+  const copyToClipboard = (url: string) => {
+    navigator.clipboard.writeText(url);
+  };
+
+  return (
+    <div className="bg-gray-50 min-h-screen p-6">
+      <div className="max-w-7xl mx-auto">
+        <h1 className="text-2xl font-semibold text-gray-800 mb-6">
+          Files
+        </h1>
+
         {mediaList.length === 0 ? (
-          <p className='text-gray-500 mt-4'>No media files uploaded yet.</p>
+          <p className="text-gray-500">No media files uploaded yet.</p>
         ) : (
-          <div className='grid md:grid-cols-4 grid-cols-2 gap-4 mt-4'>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
             {mediaList.map((media) => (
-              <div key={media.id} className='mb-2'>
-                <img src={media.file_url} alt={media.filename} className='w-16 h-16 object-cover rounded-md' />
-                <a href={media.file_url} target="_blank" rel="noopener noreferrer" className='text-blue-600 hover:underline'>
-                  {media.filename}
-                </a>
-                <span className='text-sm text-gray-500 ml-2'>({media.filetype})</span>
+              <div
+                key={media.id}
+                className="bg-white rounded-xl border shadow-sm hover:shadow-md transition overflow-hidden"
+              >
+                {/* Image */}
+                <div className="aspect-square bg-gray-100 overflow-hidden">
+                  <img
+                    src={media.file_url}
+                    alt={media.filename}
+                    className="w-full h-full object-cover hover:scale-105 transition duration-300"
+                  />
+                </div>
+
+                {/* Info */}
+                <div className="p-3">
+                  <div className="flex items-center justify-between">
+                    <p className="text-sm font-medium truncate">
+                      {media.filename}
+                    </p>
+
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() =>
+                          copyToClipboard(media.file_url)
+                        }
+                        className="text-gray-400 hover:text-gray-700 text-xs"
+                      >
+                        ⧉
+                      </button>
+
+                      <a
+                        href={media.file_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-gray-400 hover:text-gray-700 text-xs"
+                      >
+                        ↗
+                      </a>
+                    </div>
+                  </div>
+
+                  <p className="text-xs text-gray-500 mt-1">
+                    {media.filetype?.toUpperCase()}{" "}
+                    {media.filesize && `• ${formatBytes(media.filesize)}`}{" "}
+                    {media.width && media.height
+                      ? `• ${media.width}x${media.height}`
+                      : ""}
+                  </p>
+                </div>
               </div>
             ))}
           </div>
         )}
       </div>
-
     </div>
-  )
-}
+  );
+};
 
-export default page
+export default Page;

@@ -45,7 +45,8 @@ var CloudXS = class {
         url: `${this.CDN_BASE_URL}/${key}`,
         userId,
         filename: file.name,
-        filetype: file.type
+        filetype: file.type,
+        filesize: file.size
       })
     });
     return {

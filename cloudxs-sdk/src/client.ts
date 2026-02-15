@@ -53,6 +53,7 @@ export class CloudXS {
         userId,
         filename:file.name,
         filetype:file.type,
+        filesize:file.size,
       })
       
     })
