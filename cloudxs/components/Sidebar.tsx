@@ -4,7 +4,6 @@ import { getUser, logout } from "@/utils/auth";
 import {
   Home,
   BarChart3,
-  Image,
   Link2,
   Settings,
   Code2,
@@ -12,11 +11,13 @@ import {
   Menu,
   X,
   LogOut,
+  Image as ImageIcon,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import Image from "next/image";
 import React, { ReactNode, useEffect, useState } from "react";
-
+import Cloudxs from "../public/cloudxs.svg";
 /* ---------- Types ---------- */
 
 type SidebarItemProps = {
@@ -82,7 +83,8 @@ useEffect(() => {
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-5 border-b border-white/10">
           <div className="flex items-center gap-2">
-            <Cloud size={30} className="text-green-500 fill-green-500" />
+            {/* <Cloudxs size={30} className="text-green-500 fill-green-500" /> */}
+            <Image src={'/cloudxs.svg'} width={30} height={30} alt={'CloudXS Logo'} className="rounded"/>
             <h1 className="text-2xl font-semibold">
               Cloud<span className="text-green-500">XS</span>
             </h1>
@@ -115,7 +117,7 @@ useEffect(() => {
 
           <Section title="DIGITAL ASSET MANAGEMENT" />
           <SidebarItem
-            icon={<Image size={18} />}
+            icon={<ImageIcon size={18} />}
             label="Media Library"
             href="/dashboard/media"
             active={pathname.startsWith("/dashboard/media")}

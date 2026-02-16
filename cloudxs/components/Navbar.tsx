@@ -1,8 +1,9 @@
 import { ArrowRight, Cloud } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 
-const Navbar = ({ isLoggedIn = true }) => {
+const Navbar = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
   const href = isLoggedIn ? "/dashboard" : "/login";
 
   return (
@@ -10,7 +11,7 @@ const Navbar = ({ isLoggedIn = true }) => {
       
       {/* Logo */}
       <div className="flex items-center gap-2">
-        <Cloud size={40} className="text-green-600 fill-green-600" />
+        <Image src={'/cloudxs.svg'} width={35} height={35} alt={'CloudXS Logo'} className="rounded"/>
         <h1 className="text-2xl md:text-4xl font-semibold">
           Cloud<span className="text-green-600">XS</span>
         </h1>
