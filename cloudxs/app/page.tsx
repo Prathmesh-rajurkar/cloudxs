@@ -79,24 +79,24 @@ export default function Home() {
     : "Start Free";
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-emerald-50 via-white to-white">
+    <div className="min-h-screen ">
       <Navbar isLoggedIn={!!token} />
 
       <main className="pt-20">
-        <section className="relative overflow-hidden px-4 sm:px-6 lg:px-10 pb-16">
-          <div className="absolute -top-24 -right-24 h-64 w-64 rounded-full bg-emerald-300/30 blur-3xl" />
-          <div className="absolute top-1/3 -left-20 h-52 w-52 rounded-full bg-teal-300/20 blur-3xl" />
+        <section className="pt-10 relative overflow-hidden px-4 sm:px-6 lg:px-10 pb-16">
+          {/* <div className="absolute -top-24 -right-24 h-64 w-64 rounded-full bg-emerald-300/30 blur-3xl" /> */}
+          {/* <div className="absolute top-1/3 -left-20 h-52 w-52 rounded-full bg-teal-300/20 blur-3xl" /> */}
 
           <div className="relative max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
             <div className="space-y-6">
-              <span className="inline-flex items-center gap-2 rounded-full bg-emerald-100 text-emerald-800 px-3 py-1 text-xs font-semibold">
+              {/* <span className="inline-flex items-center gap-2 rounded-full bg-emerald-100 text-emerald-800 px-3 py-1 text-xs font-semibold">
                 <Sparkles size={14} />
                 Developer-first media infrastructure
-              </span>
+              </span> */}
 
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-semibold tracking-tight text-gray-900 leading-tight">
                 Ship media workflows faster with
-                <span className="text-emerald-600"> CloudXS</span>
+                <span className="text-green-600"> CloudXS</span>
               </h1>
 
               <p className="text-base sm:text-lg text-gray-600 max-w-2xl">
@@ -107,7 +107,7 @@ export default function Home() {
               <div className="flex flex-col sm:flex-row gap-3">
                 <Link
                   href={primaryHref}
-                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-5 py-3 text-white font-medium hover:bg-emerald-700 transition-colors"
+                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-green-600 px-5 py-3 text-white font-medium hover:bg-green-700 transition-colors"
                 >
                   {primaryLabel}
                   <ArrowRight size={16} />
@@ -120,11 +120,11 @@ export default function Home() {
                 </Link>
               </div>
 
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4 pt-2">
+              {/* <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4 pt-2">
                 <Metric title="Upload Flow" value="3 Steps" />
                 <Metric title="API + SDK" value="Ready" />
                 <Metric title="Media URLs" value="CDN Fast" />
-              </div>
+              </div> */}
             </div>
 
             <div className="rounded-2xl border border-emerald-100 bg-white shadow-xl p-5 sm:p-6">
@@ -141,10 +141,10 @@ const cloudxs = new CloudXS({
 const result = await cloudxs.upload(file);
 console.log(result.url);`}</code>
               </pre>
-              <div className="mt-4 flex items-start gap-2 text-sm text-emerald-700">
+              {/* <div className="mt-4 flex items-start gap-2 text-sm text-emerald-700">
                 <CheckCircle2 size={16} className="mt-0.5" />
                 Returns production-ready URL after upload.
-              </div>
+              </div> */}
             </div>
           </div>
         </section>
@@ -168,7 +168,7 @@ console.log(result.url);`}</code>
                     key={card.title}
                     className="group rounded-2xl border border-gray-200 bg-white p-5 hover:-translate-y-1 hover:shadow-lg transition-all"
                   >
-                    <div className="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-100 text-emerald-700">
+                    <div className="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-green-100 text-green-700">
                       <Icon size={18} />
                     </div>
                     <h3 className="mt-4 text-base font-semibold text-gray-900">
@@ -188,7 +188,7 @@ console.log(result.url);`}</code>
           id="workflow"
           className="px-4 sm:px-6 lg:px-10 pb-16"
         >
-          <div className="max-w-7xl mx-auto rounded-3xl border border-emerald-100 bg-emerald-50/60 p-6 sm:p-8 lg:p-10">
+          <div className="max-w-7xl mx-auto rounded-3xl border border-green-100 bg-green-50/60 p-6 sm:p-8 lg:p-10">
             <h2 className="text-3xl sm:text-4xl font-semibold text-gray-900">
               Integration in 3 clear steps
             </h2>
@@ -200,9 +200,9 @@ console.log(result.url);`}</code>
               {onboardingSteps.map((step) => (
                 <div
                   key={step.id}
-                  className="rounded-2xl bg-white border border-emerald-100 p-5"
+                  className="rounded-2xl bg-white border border-green-100 p-5"
                 >
-                  <p className="text-xs font-semibold tracking-widest text-emerald-600">
+                  <p className="text-xs font-semibold tracking-widest text-green-600">
                     STEP {step.id}
                   </p>
                   <h3 className="mt-2 text-lg font-semibold text-gray-900">
@@ -233,7 +233,7 @@ console.log(result.url);`}</code>
             <div className="mt-6 flex flex-col sm:flex-row gap-3">
               <Link
                 href="/dashboard/settings"
-                className="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-500 px-5 py-3 font-medium text-gray-950 hover:bg-emerald-400 transition-colors"
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-green-500 px-5 py-3 font-medium text-gray-950 hover:bg-green-400 transition-colors"
               >
                 Open Developer Options
                 <ArrowRight size={16} />

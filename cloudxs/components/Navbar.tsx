@@ -12,7 +12,7 @@ const Navbar = ({
   const href = isLoggedIn ? "/dashboard" : "/login";
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 border-b border-emerald-100 bg-white/90 backdrop-blur-md">
+    <header className="fixed top-0 left-0 right-0 z-50 border-b border-green-100 bg-white/90 backdrop-blur-md">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-10 h-16 flex items-center justify-between">
         <Link
           href="/"
@@ -27,7 +27,7 @@ const Navbar = ({
           />
           <h1 className="text-2xl font-semibold tracking-tight text-gray-900">
             Cloud
-            <span className="text-emerald-600">XS</span>
+            <span className="text-green-600">XS</span>
           </h1>
         </Link>
 
@@ -54,7 +54,7 @@ const Navbar = ({
 
         <Link
           href={href}
-          className="inline-flex items-center gap-2 rounded-full bg-emerald-600 px-3 sm:px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700 transition-colors"
+          className="inline-flex items-center gap-2 rounded-full bg-green-600 px-3 sm:px-4 py-2 text-sm font-medium text-white hover:bg-green-700 transition-colors"
         >
           <span className="hidden sm:inline">
             {isLoggedIn
