@@ -1,6 +1,11 @@
 "use client";
 
-import React, { useEffect, useState, useMemo } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useState,
+  useMemo,
+} from "react";
 import { getToken, getUserId } from "@/utils/auth";
 import {
   ResponsiveContainer,
@@ -26,6 +31,45 @@ interface GraphEntry {
   uploads: number;
   bandwidth: number;
 }
+
+const normalizeGraphData = (
+  value: unknown
+): Record<string, GraphEntry> => {
+  if (!value || typeof value !== "object") {
+    return {};
+  }
+
+  return Object.entries(
+    value as Record<string, unknown>
+  ).reduce((acc, [date, entry]) => {
+    if (typeof entry === "number") {
+      acc[date] = { uploads: entry, bandwidth: 0 };
+      return acc;
+    }
+
+    if (entry && typeof entry === "object") {
+      const parsed =
+        entry as Partial<GraphEntry> & {
+          count?: number;
+        };
+
+      acc[date] = {
+        uploads:
+          typeof parsed.uploads === "number"
+            ? parsed.uploads
+            : typeof parsed.count === "number"
+            ? parsed.count
+            : 0,
+        bandwidth:
+          typeof parsed.bandwidth === "number"
+            ? parsed.bandwidth
+            : 0,
+      };
+    }
+
+    return acc;
+  }, {} as Record<string, GraphEntry>);
+};
 
 const formatBytes = (bytes: number) => {
   if (!bytes) return "0 B";
@@ -62,39 +106,67 @@ const Page = () => {
 
   const [error, setError] = useState("");
 
-  const fetchAnalytics = async () => {
-    const res = await fetch(
-      `${BASE_API_URL}/analytics/analytics?user_id=${user_id}`,
-      {
-        headers: {
-          Authorization: `Bearer ${getToken()}`,
-        },
-      }
-    );
-    const data = await res.json();
-    setAnalytics(data);
-  };
+  const fetchAnalytics = useCallback(async () => {
+    if (!user_id) return;
 
-  const fetchGraphData = async () => {
-    const res = await fetch(
-      `${BASE_API_URL}/analytics/graph-data?user_id=${user_id}&start_date=${startDate}&end_date=${endDate}`,
-      {
-        headers: {
-          Authorization: `Bearer ${getToken()}`,
-        },
+    try {
+      const res = await fetch(
+        `${BASE_API_URL}/analytics/analytics?user_id=${user_id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+        }
+      );
+
+      if (!res.ok) {
+        throw new Error(
+          "Failed to fetch analytics"
+        );
       }
-    );
-    const data = await res.json();
-    setGraphData(data.uploadsByDate || {});
-  };
+
+      const data = await res.json();
+      setAnalytics(data);
+    } catch {
+      setAnalytics(null);
+    }
+  }, [user_id]);
+
+  const fetchGraphData = useCallback(async () => {
+    if (!user_id) return;
+
+    try {
+      const res = await fetch(
+        `${BASE_API_URL}/analytics/graph-data?user_id=${user_id}&start_date=${startDate}&end_date=${endDate}`,
+        {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+        }
+      );
+
+      if (!res.ok) {
+        throw new Error(
+          "Failed to fetch graph data"
+        );
+      }
+
+      const data = await res.json();
+      setGraphData(
+        normalizeGraphData(data.uploadsByDate)
+      );
+    } catch {
+      setGraphData({});
+    }
+  }, [endDate, startDate, user_id]);
 
   useEffect(() => {
     fetchAnalytics();
-  }, []);
+  }, [fetchAnalytics]);
 
   useEffect(() => {
     fetchGraphData();
-  }, [startDate, endDate]);
+  }, [fetchGraphData]);
 
   const handleDateChange = (
     newStart: string,

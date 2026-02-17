@@ -7,13 +7,15 @@ const DashboardLayout = ({
   children: React.ReactNode;
 }>) => {
   return (
-      <div className="min-h-screen bg-gray-50">
-        {/* Sidebar */}
-        <Sidebar />
+    <div className="min-h-screen bg-gray-50">
+      {/* Sidebar */}
+      <Sidebar />
 
-        {/* Main Content */}
-        <main className="md:ml-64">{children}</main>
-      </div>
+      {/* Main Content */}
+      <main className="md:ml-64 pt-16 md:pt-0 min-h-screen">
+        {children}
+      </main>
+    </div>
   );
 };
 

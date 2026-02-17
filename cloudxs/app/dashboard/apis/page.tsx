@@ -1,9 +1,15 @@
 "use client";
 
 import { getToken, getUserId } from "@/utils/auth";
-import React, { useEffect, useState } from "react";
-import { toast } from "sonner"
-const BASE_API_URL = process.env.NEXT_PUBLIC_BASE_API_URL;
+import {
+  type ReactNode,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
+import { toast } from "sonner";
+
+const BASE_API_URL = process.env.NEXT_PUBLIC_BASE_API_URL!;
 
 type ApiKey = {
   id: number;
@@ -14,51 +20,69 @@ type ApiKey = {
 
 const ApiKeysPage = () => {
   const user_id = getUserId();
-  // console.log(user_id);
-
   const [keys, setKeys] = useState<ApiKey[]>([]);
   const [openCreate, setOpenCreate] = useState(false);
   const [openShow, setOpenShow] = useState(false);
   const [keyName, setKeyName] = useState("");
   const [generatedKey, setGeneratedKey] = useState("");
 
-  /* ---------------- Fetch Keys ---------------- */
-  const fetchKeys = async () => {
-    const res = await fetch(
-      `${BASE_API_URL}/apikey/get-apikeys?user_id=${user_id}`,
-      {
-        headers: {
-          Authorization: `Bearer ${getToken()}`,
-        },
+  const fetchKeys = useCallback(async () => {
+    if (!user_id) return;
+
+    try {
+      const res = await fetch(
+        `${BASE_API_URL}/apikey/get-apikeys?user_id=${user_id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+          },
+        }
+      );
+
+      if (!res.ok) {
+        throw new Error("Failed to fetch API keys");
       }
-    );
-    const data = await res.json();
-    setKeys(data.api_keys || []);
-  };
+
+      const data = await res.json();
+      setKeys(data.api_keys || []);
+    } catch {
+      setKeys([]);
+    }
+  }, [user_id]);
 
   useEffect(() => {
     fetchKeys();
-  }, []);
-// ck_live_8fef44bf28fb40f16f4f0b8efcba0ec3
-  /* ---------------- Create Key ---------------- */
+  }, [fetchKeys]);
+
   const createKey = async () => {
-    const res = await fetch(`${BASE_API_URL}/apikey/create-apikey`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${getToken()}`,
-      },
-      body: JSON.stringify({ user_id, name: keyName }),
-    });
+    if (!keyName || !user_id) return;
+
+    const res = await fetch(
+      `${BASE_API_URL}/apikey/create-apikey`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${getToken()}`,
+        },
+        body: JSON.stringify({
+          user_id,
+          name: keyName.trim(),
+        }),
+      }
+    );
 
     const data = await res.json();
-    // console.log(data);
+
+    if (!res.ok || !data.api_key) {
+      toast("Could not create API key");
+      return;
+    }
 
     setGeneratedKey(data.api_key);
     setOpenCreate(false);
     setOpenShow(true);
     setKeyName("");
-
     fetchKeys();
   };
 
@@ -68,21 +92,19 @@ const ApiKeysPage = () => {
   };
 
   return (
-    <div className="p-4 md:p-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
+    <div className="p-4 sm:p-6 md:p-8">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <h1 className="text-2xl font-semibold">API Keys</h1>
         <button
           onClick={() => setOpenCreate(true)}
-          className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition"
+          className="w-full sm:w-auto bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition"
         >
           + Create New Key
         </button>
       </div>
 
-      {/* Table */}
-      <div className="mt-10 overflow-x-auto bg-white rounded-xl border">
-        <table className="w-full text-sm">
+      <div className="mt-8 overflow-x-auto bg-white rounded-xl border">
+        <table className="w-full min-w-[560px] text-sm">
           <thead className="bg-gray-50 border-b">
             <tr>
               <th className="text-left px-4 py-3">Name</th>
@@ -92,36 +114,56 @@ const ApiKeysPage = () => {
             </tr>
           </thead>
           <tbody>
-            {keys.map((key) => (
-              <tr key={key.id} className="border-b last:border-none">
-                <td className="px-4 py-3">{key.name}</td>
-                <td className="px-4 py-3 text-gray-600">
-                  {new Date(key.created_at).toLocaleDateString()}
+            {keys.length === 0 ? (
+              <tr>
+                <td className="px-4 py-6 text-gray-500" colSpan={4}>
+                  No API keys found.
                 </td>
-                <td className="px-4 py-3">
-                  <span
-                    className={`px-2 py-1 rounded-full text-xs font-medium ${
-                      key.is_active
-                        ? "bg-green-100 text-green-700"
-                        : "bg-gray-100 text-gray-600"
-                    }`}
-                  >
-                    {key.is_active ? "Active" : "Inactive"}
-                  </span>
-                </td>
-                <td className="px-4 py-3 text-red-500">Revoke</td>
               </tr>
-            ))}
+            ) : (
+              keys.map((key) => (
+                <tr
+                  key={key.id}
+                  className="border-b last:border-none"
+                >
+                  <td className="px-4 py-3">{key.name}</td>
+                  <td className="px-4 py-3 text-gray-600">
+                    {new Date(
+                      key.created_at
+                    ).toLocaleDateString()}
+                  </td>
+                  <td className="px-4 py-3">
+                    <span
+                      className={`px-2 py-1 rounded-full text-xs font-medium ${
+                        key.is_active
+                          ? "bg-green-100 text-green-700"
+                          : "bg-gray-100 text-gray-600"
+                      }`}
+                    >
+                      {key.is_active
+                        ? "Active"
+                        : "Inactive"}
+                    </span>
+                  </td>
+                  <td className="px-4 py-3 text-gray-400">
+                    Revoke
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>
 
-      {/* Create Modal */}
       {openCreate && (
         <Modal onClose={() => setOpenCreate(false)}>
-          <h2 className="text-lg font-semibold mb-4">Create API Key</h2>
+          <h2 className="text-lg font-semibold mb-4">
+            Create API Key
+          </h2>
 
-          <label className="block text-sm font-medium mb-1">Key Name</label>
+          <label className="block text-sm font-medium mb-1">
+            Key Name
+          </label>
           <input
             value={keyName}
             onChange={(e) => setKeyName(e.target.value)}
@@ -130,7 +172,7 @@ const ApiKeysPage = () => {
           />
 
           <div className="mt-4 bg-yellow-50 border border-yellow-300 text-yellow-800 text-sm p-3 rounded-lg">
-            ⚠️ This API key will be shown only once.
+            This API key will be shown only once.
           </div>
 
           <div className="mt-6 flex justify-end gap-3">
@@ -141,7 +183,7 @@ const ApiKeysPage = () => {
               Cancel
             </button>
             <button
-              disabled={!keyName}
+              disabled={!keyName.trim()}
               onClick={createKey}
               className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 disabled:opacity-50"
             >
@@ -151,10 +193,11 @@ const ApiKeysPage = () => {
         </Modal>
       )}
 
-      {/* Show Key Modal (ONE TIME) */}
       {openShow && (
         <Modal onClose={() => setOpenShow(false)}>
-          <h2 className="text-lg font-semibold mb-4">Your API Key</h2>
+          <h2 className="text-lg font-semibold mb-4">
+            Your API Key
+          </h2>
 
           <div className="bg-gray-100 rounded-lg p-3 font-mono text-sm break-all">
             {generatedKey}
@@ -168,8 +211,8 @@ const ApiKeysPage = () => {
           </button>
 
           <div className="mt-4 bg-red-50 border border-red-300 text-red-800 text-sm p-3 rounded-lg">
-            🚨 Save this key now. Once you close this dialog, you won’t be able
-            to see it again.
+            Save this key now. Once this dialog is closed, it
+            will not be shown again.
           </div>
 
           <div className="mt-6 flex justify-end">
@@ -186,17 +229,24 @@ const ApiKeysPage = () => {
   );
 };
 
-export default ApiKeysPage;
-
-/* ---------- Modal ---------- */
 const Modal = ({
   children,
   onClose,
 }: {
-  children: React.ReactNode;
+  children: ReactNode;
   onClose: () => void;
 }) => (
-  <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-    <div className="bg-white rounded-xl w-full max-w-md p-6">{children}</div>
+  <div
+    className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4"
+    onClick={onClose}
+  >
+    <div
+      className="bg-white rounded-xl w-full max-w-md p-6"
+      onClick={(event) => event.stopPropagation()}
+    >
+      {children}
+    </div>
   </div>
 );
+
+export default ApiKeysPage;

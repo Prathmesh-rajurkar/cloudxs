@@ -4,10 +4,8 @@ import { getUser, logout } from "@/utils/auth";
 import {
   Home,
   BarChart3,
-  Link2,
   Settings,
   Code2,
-  Cloud,
   Menu,
   X,
   LogOut,
@@ -16,8 +14,7 @@ import {
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
-import React, { ReactNode, useEffect, useState } from "react";
-import Cloudxs from "../public/cloudxs.svg";
+import { ReactNode, useState } from "react";
 /* ---------- Types ---------- */
 
 type SidebarItemProps = {
@@ -25,6 +22,7 @@ type SidebarItemProps = {
   label: string;
   href: string;
   active: boolean;
+  onClick?: () => void;
 };
 
 type SectionProps = {
@@ -36,29 +34,23 @@ type SectionProps = {
 const Sidebar = () => {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
-  const [user, setUser] = useState<{
-  username?: string;
-  email?: string;
-} | null>(null);
-
-useEffect(() => {
-  const u = getUser();
-
-  if (u) {
-    setUser({
+  const [user] = useState(() => {
+    const u = getUser();
+    if (!u) return null;
+    return {
       username: u.username ?? undefined,
       email: u.email ?? undefined,
-    });
-  }
-}, []);
+    };
+  });
 
 
   return (
     <>
       {/* Mobile Toggle */}
       <button
+        aria-label="Open sidebar"
         onClick={() => setOpen(true)}
-        className="md:hidden fixed top-4 left-4 z-50 bg-green-600 text-white p-2 rounded-lg"
+        className="md:hidden fixed top-3 left-3 z-50 bg-green-600 text-white p-2 rounded-lg shadow-lg"
       >
         <Menu size={20} />
       </button>
@@ -91,6 +83,7 @@ useEffect(() => {
           </div>
 
           <button
+            aria-label="Close sidebar"
             onClick={() => setOpen(false)}
             className="md:hidden text-white/70 hover:text-white"
           >
@@ -105,12 +98,14 @@ useEffect(() => {
             label="Get Started"
             href="/dashboard"
             active={pathname === "/dashboard"}
+            onClick={() => setOpen(false)}
           />
           <SidebarItem
             icon={<BarChart3 size={18} />}
             label="Usage Analytics"
             href="/dashboard/analytics"
             active={pathname.startsWith("/dashboard/analytics")}
+            onClick={() => setOpen(false)}
           />
 
           <Divider />
@@ -121,28 +116,26 @@ useEffect(() => {
             label="Media Library"
             href="/dashboard/media"
             active={pathname.startsWith("/dashboard/media")}
+            onClick={() => setOpen(false)}
           />
 
           <Divider />
 
           <Section title="PLATFORM" />
-          <SidebarItem
-            icon={<Link2 size={18} />}
-            label="URL Endpoints"
-            href="/dashboard/endpoints"
-            active={pathname.startsWith("/dashboard/endpoints")}
-          />
+          
           <SidebarItem
             icon={<Settings size={18} />}
             label="Developer Options"
             href="/dashboard/settings"
             active={pathname.startsWith("/dashboard/settings")}
+            onClick={() => setOpen(false)}
           />
           <SidebarItem
             icon={<Code2 size={18} />}
             label="APIs"
             href="/dashboard/apis"
             active={pathname.startsWith("/dashboard/apis")}
+            onClick={() => setOpen(false)}
           />
         </nav>
 
@@ -176,9 +169,16 @@ export default Sidebar;
 
 /* ---------- Helpers ---------- */
 
-const SidebarItem = ({ icon, label, href, active }: SidebarItemProps) => (
+const SidebarItem = ({
+  icon,
+  label,
+  href,
+  active,
+  onClick,
+}: SidebarItemProps) => (
   <Link
     href={href}
+    onClick={onClick}
     className={`
       flex items-center gap-3 px-3 py-2 rounded-lg transition
       ${

@@ -53,7 +53,7 @@ router.get("/graph-data", async (req, res) => {
 
     const { data, error } = await supabase
       .from("media_files")
-      .select("created_at")
+      .select("created_at, filesize")
       .eq("user_id", user_id)
       .gte("created_at", startDateObj.toISOString())
       .lte("created_at", endDateObj.toISOString());
@@ -61,11 +61,21 @@ router.get("/graph-data", async (req, res) => {
     if (error) {
       return res.status(500).json({ message: error.message });
     }
-    const uploadsByDate = data.reduce((acc: any, file) => {
+    const uploadsByDate = data.reduce(
+      (
+        acc: Record<string, { uploads: number; bandwidth: number }>,
+        file: { created_at: string; filesize?: number },
+      ) => {
       const date = new Date(file.created_at).toISOString().split("T")[0];
-      acc[date] = (acc[date] || 0) + 1;
+      if (!acc[date]) {
+        acc[date] = { uploads: 0, bandwidth: 0 };
+      }
+      acc[date].uploads += 1;
+      acc[date].bandwidth += Number(file.filesize || 0);
       return acc;
-    }, {});
+      },
+      {},
+    );
     return res.json({
       uploadsByDate,
     });

@@ -1,83 +1,101 @@
-import { Cloud } from "lucide-react";
-import React from "react";
+import Link from "next/link";
 
 const Footer = () => {
   return (
-    <footer className="bg-green-600 text-white">
-      <div className="max-w-7xl mx-auto px-4 md:px-16 py-16">
-        
-        {/* Top Section */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-12">
-          
-          {/* Brand */}
+    <footer className="border-t border-emerald-100 bg-white">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 py-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           <div>
-            <div className="flex items-center gap-2">
-              <Cloud size={36} className="text-white fill-white" />
-              <h2 className="text-2xl font-semibold">
-                Cloud<span className="opacity-90">XS</span>
-              </h2>
-            </div>
-            <p className="mt-4 text-green-100 text-sm leading-relaxed">
-              CloudXS is a developer-first media platform for uploading,
-              optimizing, transforming, and delivering images and videos
-              globally.
+            <h3 className="text-xl font-semibold text-gray-900">
+              Cloud
+              <span className="text-emerald-600">XS</span>
+            </h3>
+            <p className="mt-3 text-sm text-gray-600 leading-6">
+              Upload, optimize, and deliver media
+              globally with API-first workflows.
             </p>
           </div>
 
-          {/* Product */}
           <div>
-            <h3 className="text-sm font-semibold uppercase tracking-wide">
+            <h4 className="text-sm font-semibold text-gray-900">
               Product
-            </h3>
-            <ul className="mt-4 space-y-3 text-sm text-green-100">
-              <li className="hover:text-white cursor-pointer">Features</li>
-              <li className="hover:text-white cursor-pointer">Pricing</li>
-              <li className="hover:text-white cursor-pointer">API Docs</li>
-              <li className="hover:text-white cursor-pointer">Changelog</li>
+            </h4>
+            <ul className="mt-3 space-y-2 text-sm text-gray-600">
+              <li>
+                <a href="#features" className="hover:text-gray-900">
+                  Features
+                </a>
+              </li>
+              <li>
+                <a href="#workflow" className="hover:text-gray-900">
+                  How It Works
+                </a>
+              </li>
+              <li>
+                <Link href="/dashboard" className="hover:text-gray-900">
+                  Dashboard
+                </Link>
+              </li>
             </ul>
           </div>
 
-          {/* Developers */}
           <div>
-            <h3 className="text-sm font-semibold uppercase tracking-wide">
+            <h4 className="text-sm font-semibold text-gray-900">
               Developers
-            </h3>
-            <ul className="mt-4 space-y-3 text-sm text-green-100">
-              <li className="hover:text-white cursor-pointer">Documentation</li>
-              <li className="hover:text-white cursor-pointer">SDKs</li>
-              <li className="hover:text-white cursor-pointer">Status</li>
-              <li className="hover:text-white cursor-pointer">Security</li>
+            </h4>
+            <ul className="mt-3 space-y-2 text-sm text-gray-600">
+              <li>
+                <Link
+                  href="/dashboard/settings"
+                  className="hover:text-gray-900"
+                >
+                  SDK Guide
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/dashboard/apis"
+                  className="hover:text-gray-900"
+                >
+                  API Keys
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/dashboard/endpoints"
+                  className="hover:text-gray-900"
+                >
+                  Endpoints
+                </Link>
+              </li>
             </ul>
           </div>
 
-          {/* Company */}
           <div>
-            <h3 className="text-sm font-semibold uppercase tracking-wide">
-              Company
-            </h3>
-            <ul className="mt-4 space-y-3 text-sm text-green-100">
-              <li className="hover:text-white cursor-pointer">About</li>
-              <li className="hover:text-white cursor-pointer">Blog</li>
-              <li className="hover:text-white cursor-pointer">Careers</li>
-              <li className="hover:text-white cursor-pointer">Contact</li>
+            <h4 className="text-sm font-semibold text-gray-900">
+              Account
+            </h4>
+            <ul className="mt-3 space-y-2 text-sm text-gray-600">
+              <li>
+                <Link href="/register" className="hover:text-gray-900">
+                  Create Account
+                </Link>
+              </li>
+              <li>
+                <Link href="/login" className="hover:text-gray-900">
+                  Login
+                </Link>
+              </li>
             </ul>
           </div>
         </div>
 
-        {/* Bottom Bar */}
-        <div className="mt-12 border-t border-green-500 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-sm text-green-100">
-            © {new Date().getFullYear()} CloudXS. All rights reserved.
+        <div className="mt-10 pt-6 border-t border-gray-100 text-xs text-gray-500 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+          <p>
+            © {new Date().getFullYear()} CloudXS. All
+            rights reserved.
           </p>
-
-          <div className="flex items-center gap-6 text-sm text-green-100">
-            <span className="hover:text-white cursor-pointer">
-              Privacy Policy
-            </span>
-            <span className="hover:text-white cursor-pointer">
-              Terms of Service
-            </span>
-          </div>
+          <p>Built for developers shipping media-heavy apps.</p>
         </div>
       </div>
     </footer>

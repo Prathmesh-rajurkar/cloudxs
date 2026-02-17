@@ -1,38 +1,70 @@
-import { ArrowRight, Cloud } from "lucide-react";
+"use client";
+
+import { ArrowRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
 
-const Navbar = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
+const Navbar = ({
+  isLoggedIn,
+}: {
+  isLoggedIn: boolean;
+}) => {
   const href = isLoggedIn ? "/dashboard" : "/login";
 
   return (
-    <div className="flex items-center justify-between py-4 px-4 md:px-32 border-b border-gray-300 fixed top-0 right-0 w-full bg-white z-50">
-      
-      {/* Logo */}
-      <div className="flex items-center gap-2">
-        <Image src={'/cloudxs.svg'} width={35} height={35} alt={'CloudXS Logo'} className="rounded"/>
-        <h1 className="text-2xl md:text-4xl font-semibold">
-          Cloud<span className="text-green-600">XS</span>
-        </h1>
+    <header className="fixed top-0 left-0 right-0 z-50 border-b border-emerald-100 bg-white/90 backdrop-blur-md">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-10 h-16 flex items-center justify-between">
+        <Link
+          href="/"
+          className="flex items-center gap-2"
+        >
+          <Image
+            src="/cloudxs.svg"
+            width={32}
+            height={32}
+            alt="CloudXS Logo"
+            className="rounded"
+          />
+          <h1 className="text-2xl font-semibold tracking-tight text-gray-900">
+            Cloud
+            <span className="text-emerald-600">XS</span>
+          </h1>
+        </Link>
+
+        <nav className="hidden md:flex items-center gap-6 text-sm text-gray-600">
+          <a
+            href="#features"
+            className="hover:text-gray-900 transition-colors"
+          >
+            Features
+          </a>
+          <a
+            href="#workflow"
+            className="hover:text-gray-900 transition-colors"
+          >
+            Workflow
+          </a>
+          <a
+            href="#developer"
+            className="hover:text-gray-900 transition-colors"
+          >
+            Developer
+          </a>
+        </nav>
+
+        <Link
+          href={href}
+          className="inline-flex items-center gap-2 rounded-full bg-emerald-600 px-3 sm:px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700 transition-colors"
+        >
+          <span className="hidden sm:inline">
+            {isLoggedIn
+              ? "Open Dashboard"
+              : "Login"}
+          </span>
+          <ArrowRight size={16} />
+        </Link>
       </div>
-
-      {/* Action Button */}
-      <Link
-        href={href}
-        className="flex items-center gap-3 md:bg-green-600 px-3 md:px-4 py-2 rounded-full md:hover:bg-green-700 transition"
-      >
-        {/* Text hidden on mobile */}
-        <span className="hidden md:block text-lg text-white">
-          {isLoggedIn ? "Dashboard" : "Login"}
-        </span>
-
-        {/* Arrow (always visible) */}
-        <div className="bg-green-800 rounded-full p-2 flex items-center justify-center">
-          <ArrowRight size={18} className="text-white" />
-        </div>
-      </Link>
-    </div>
+    </header>
   );
 };
 
