@@ -15,9 +15,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <AppGuard><Analytics/>{children}</AppGuard>
+        <AppGuard>{children}</AppGuard>
         <Toaster />
-
+        <Analytics />
       </body>
     </html>
   );
