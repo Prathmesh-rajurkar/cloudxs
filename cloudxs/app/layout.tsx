@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   title: "CloudXS",
   description: "CloudXS - Your Cloud Storage Solution",
 };
-
+import { Analytics } from "@vercel/analytics/next"
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -15,7 +15,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <AppGuard>{children}</AppGuard>
+        <AppGuard><Analytics/>{children}</AppGuard>
         <Toaster />
 
       </body>
