@@ -1,12 +1,17 @@
 "use client";
 
-import { getToken, getUserId } from "@/utils/auth";
+import {
+  getToken,
+  getUserId,
+  isTokenValid,
+} from "@/utils/auth";
 import {
   type ReactNode,
   useCallback,
   useEffect,
   useState,
 } from "react";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 const BASE_API_URL = process.env.NEXT_PUBLIC_BASE_API_URL!;
@@ -19,15 +24,22 @@ type ApiKey = {
 };
 
 const ApiKeysPage = () => {
+  const router = useRouter();
   const user_id = getUserId();
+  const isLoggedIn = isTokenValid() && Boolean(user_id);
   const [keys, setKeys] = useState<ApiKey[]>([]);
   const [openCreate, setOpenCreate] = useState(false);
   const [openShow, setOpenShow] = useState(false);
+  const [openLoginPrompt, setOpenLoginPrompt] =
+    useState(false);
   const [keyName, setKeyName] = useState("");
   const [generatedKey, setGeneratedKey] = useState("");
 
   const fetchKeys = useCallback(async () => {
-    if (!user_id) return;
+    if (!isLoggedIn || !user_id) {
+      setKeys([]);
+      return;
+    }
 
     try {
       const res = await fetch(
@@ -48,14 +60,26 @@ const ApiKeysPage = () => {
     } catch {
       setKeys([]);
     }
-  }, [user_id]);
+  }, [isLoggedIn, user_id]);
 
   useEffect(() => {
     fetchKeys();
   }, [fetchKeys]);
 
+  const openCreateFlow = () => {
+    if (!isLoggedIn) {
+      setOpenLoginPrompt(true);
+      return;
+    }
+    setOpenCreate(true);
+  };
+
   const createKey = async () => {
-    if (!keyName || !user_id) return;
+    if (!isLoggedIn || !keyName || !user_id) {
+      setOpenCreate(false);
+      setOpenLoginPrompt(true);
+      return;
+    }
 
     const res = await fetch(
       `${BASE_API_URL}/apikey/create-apikey`,
@@ -96,7 +120,7 @@ const ApiKeysPage = () => {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <h1 className="text-2xl font-semibold">API Keys</h1>
         <button
-          onClick={() => setOpenCreate(true)}
+          onClick={openCreateFlow}
           className="w-full sm:w-auto bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition"
         >
           + Create New Key
@@ -221,6 +245,31 @@ const ApiKeysPage = () => {
               className="bg-gray-900 text-white px-4 py-2 rounded-lg"
             >
               I have saved it
+            </button>
+          </div>
+        </Modal>
+      )}
+
+      {openLoginPrompt && (
+        <Modal onClose={() => setOpenLoginPrompt(false)}>
+          <h2 className="text-lg font-semibold mb-2">
+            Login Required
+          </h2>
+          <p className="text-sm text-gray-600">
+            Please log in first to create and manage API keys.
+          </p>
+          <div className="mt-6 flex justify-end gap-3">
+            <button
+              onClick={() => setOpenLoginPrompt(false)}
+              className="px-4 py-2 border rounded-lg"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={() => router.push("/login")}
+              className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700"
+            >
+              Go to Login
             </button>
           </div>
         </Modal>

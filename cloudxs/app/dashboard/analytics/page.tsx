@@ -6,7 +6,12 @@ import React, {
   useState,
   useMemo,
 } from "react";
-import { getToken, getUserId } from "@/utils/auth";
+import {
+  getToken,
+  getUserId,
+  isTokenValid,
+} from "@/utils/auth";
+import Link from "next/link";
 import {
   ResponsiveContainer,
   LineChart,
@@ -83,6 +88,7 @@ const formatBytes = (bytes: number) => {
 
 const Page = () => {
   const user_id = getUserId();
+  const isLoggedIn = isTokenValid() && Boolean(user_id);
 
   const today = new Date();
   today.setHours(23, 59, 59, 999);
@@ -107,7 +113,10 @@ const Page = () => {
   const [error, setError] = useState("");
 
   const fetchAnalytics = useCallback(async () => {
-    if (!user_id) return;
+    if (!isLoggedIn || !user_id) {
+      setAnalytics(null);
+      return;
+    }
 
     try {
       const res = await fetch(
@@ -130,10 +139,13 @@ const Page = () => {
     } catch {
       setAnalytics(null);
     }
-  }, [user_id]);
+  }, [isLoggedIn, user_id]);
 
   const fetchGraphData = useCallback(async () => {
-    if (!user_id) return;
+    if (!isLoggedIn || !user_id) {
+      setGraphData({});
+      return;
+    }
 
     try {
       const res = await fetch(
@@ -158,7 +170,7 @@ const Page = () => {
     } catch {
       setGraphData({});
     }
-  }, [endDate, startDate, user_id]);
+  }, [endDate, isLoggedIn, startDate, user_id]);
 
   useEffect(() => {
     fetchAnalytics();
@@ -230,6 +242,30 @@ const Page = () => {
       };
     });
   }, [graphData, startDate, endDate]);
+
+  if (!isLoggedIn) {
+    return (
+      <div className="p-6 md:p-10 max-w-6xl mx-auto">
+        <h1 className="text-2xl font-semibold text-gray-800 mb-8">
+          Usage Analytics
+        </h1>
+        <div className="bg-white border rounded-xl p-6">
+          <h2 className="text-lg font-semibold text-gray-900">
+            Sign in to view analytics
+          </h2>
+          <p className="text-sm text-gray-600 mt-2">
+            Log in to access uploads, storage, and bandwidth metrics.
+          </p>
+          <Link
+            href="/login"
+            className="inline-block mt-4 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition"
+          >
+            Go to Login
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-6 md:p-10 max-w-6xl mx-auto">

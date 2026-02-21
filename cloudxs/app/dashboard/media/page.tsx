@@ -1,12 +1,17 @@
 "use client";
 
-import { getToken, getUserId } from "@/utils/auth";
+import {
+  getToken,
+  getUserId,
+  isTokenValid,
+} from "@/utils/auth";
 import { Copy, ExternalLink } from "lucide-react";
 import {
   useCallback,
   useEffect,
   useState,
 } from "react";
+import Link from "next/link";
 
 interface Media {
   id: string;
@@ -43,9 +48,13 @@ const isVideo = (filetype?: string) => {
 const Page = () => {
   const [mediaList, setMediaList] = useState<Media[]>([]);
   const user_id = getUserId();
+  const isLoggedIn = isTokenValid() && Boolean(user_id);
 
   const fetchMedia = useCallback(async () => {
-    if (!user_id) return;
+    if (!isLoggedIn || !user_id) {
+      setMediaList([]);
+      return;
+    }
 
     try {
       const res = await fetch(
@@ -66,7 +75,7 @@ const Page = () => {
     } catch (error) {
       console.error("Error fetching media:", error);
     }
-  }, [user_id]);
+  }, [isLoggedIn, user_id]);
 
   useEffect(() => {
     fetchMedia();
@@ -83,8 +92,29 @@ const Page = () => {
           Files
         </h1>
 
+        {!isLoggedIn && (
+          <div className="bg-white border rounded-xl p-6 mb-6">
+            <h2 className="text-lg font-semibold text-gray-900">
+              Sign in to view your media
+            </h2>
+            <p className="text-sm text-gray-600 mt-2">
+              Log in to access your uploaded files, previews, and links.
+            </p>
+            <Link
+              href="/login"
+              className="inline-block mt-4 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition"
+            >
+              Go to Login
+            </Link>
+          </div>
+        )}
+
         {mediaList.length === 0 ? (
-          <p className="text-gray-500">No media files uploaded yet.</p>
+          <p className="text-gray-500">
+            {isLoggedIn
+              ? "No media files uploaded yet."
+              : "Login required to view your media library."}
+          </p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
             {mediaList.map((media) => (
